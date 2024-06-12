@@ -1,0 +1,83 @@
+-- made by swavas
+
+-- Create the ScreenGui
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "TeleportGui"
+screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
+-- Create the Frame to hold the button and title
+local frame = Instance.new("Frame")
+frame.Name = "MainFrame"
+frame.Parent = screenGui
+frame.Size = UDim2.new(0, 200, 0, 100) -- Adjust size as needed
+frame.Position = UDim2.new(0.5, -100, 0.5, -50) -- Centered on screen
+frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25) -- Dark gray background
+frame.BorderSizePixel = 0
+frame.Active = true
+frame.Draggable = true
+
+-- Create the Title Label
+local titleLabel = Instance.new("TextLabel")
+titleLabel.Name = "TitleLabel"
+titleLabel.Parent = frame
+titleLabel.Size = UDim2.new(1, 0, 0, 25) -- Adjust size as needed
+titleLabel.Position = UDim2.new(0, 0, 0, 0)
+titleLabel.Text = "VOID TP"
+titleLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0) -- Black background
+titleLabel.TextColor3 = Color3.fromRGB(255, 0, 255) -- Bright magenta text
+titleLabel.TextScaled = true
+titleLabel.BorderSizePixel = 0
+
+-- Create the TextButton
+local teleportButton = Instance.new("TextButton")
+teleportButton.Name = "TeleportButton"
+teleportButton.Parent = frame
+teleportButton.Size = UDim2.new(0.8, 0, 0.4, 0) -- Adjust size as needed
+teleportButton.Position = UDim2.new(0.1, 0, 0.5, 0) -- Centered in the frame
+teleportButton.Text = "Teleport"
+teleportButton.BackgroundColor3 = Color3.fromRGB(50, 0, 100) -- Dark purple button
+teleportButton.TextColor3 = Color3.fromRGB(255, 255, 255) -- White text
+teleportButton.TextScaled = true
+teleportButton.BorderSizePixel = 0
+
+-- Add a UIGradient to the frame for a galaxy effect
+local uiGradient = Instance.new("UIGradient")
+uiGradient.Parent = frame
+
+local tweenService = game:GetService("TweenService")
+
+-- Define the colors for the galaxy theme
+local colors = {
+    ColorSequence.new{ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 0, 128)), ColorSequenceKeypoint.new(1, Color3.fromRGB(75, 0, 130))},
+    ColorSequence.new{ColorSequenceKeypoint.new(0, Color3.fromRGB(25, 25, 112)), ColorSequenceKeypoint.new(1, Color3.fromRGB(138, 43, 226))},
+    ColorSequence.new{ColorSequenceKeypoint.new(0, Color3.fromRGB(72, 61, 139)), ColorSequenceKeypoint.new(1, Color3.fromRGB(147, 112, 219))},
+    ColorSequence.new{ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 0, 0)), ColorSequenceKeypoint.new(1, Color3.fromRGB(153, 50, 204))}
+}
+
+-- Function to tween the gradient colors
+local function tweenGradient()
+    local index = 1
+    while true do
+        local nextIndex = (index % #colors) + 1
+        local tween = tweenService:Create(uiGradient, TweenInfo.new(1, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut), {Color = colors[nextIndex]})
+        tween:Play()
+        tween.Completed:Wait()
+        index = nextIndex
+        wait(1)
+    end
+end
+
+-- Start the gradient tweening
+spawn(tweenGradient)
+
+-- Add the functionality to the button
+teleportButton.MouseButton1Click:Connect(function()
+    local player = game.Players.LocalPlayer
+    if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+        local character = player.Character
+        local rootPart = character.HumanoidRootPart
+        local currentPosition = rootPart.Position
+        local newPosition = currentPosition + Vector3.new(0, 5000, 0)
+        rootPart.CFrame = CFrame.new(newPosition)
+    end
+end)
